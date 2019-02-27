@@ -2,12 +2,12 @@ import os
 from K_NN import calculateK, classify
 import sys
 sys.path.append('../')  # Move path so that we can import from the datasets directory
-from datasets.weather import create_data_set  # noqa: E402
+from datasets.weather import create_labeled_data_set  # noqa: E402
 
 
 if __name__ == "__main__":
-    test_set = create_data_set('../datasets/dataset1.csv')
-    validation_set = create_data_set('../datasets/validation1.csv')
+    test_set = create_labeled_data_set('../datasets/dataset1.csv')
+    validation_set = create_labeled_data_set('../datasets/validation1.csv')
 
     correctness = calculateK(test_set, validation_set)
     # Take the max K

@@ -27,7 +27,19 @@ def create_data_set(file_name):
     This function can only be used for the data set that was given for the exercise
 
     :param file_name: The file name
-    :return: The data set that can be used for the K-NN exercise
+    :return: The data set that can be used for the exercises
+    """
+
+    return np.genfromtxt(file_name, delimiter=';', usecols=[1, 2, 3, 4, 5, 6, 7], converters={5: lambda s: 0 if s == b"-1" else float(s), 7: lambda s: 0 if s == b"-1" else float(s)})
+
+
+def create_labeled_data_set(file_name):
+    """
+    Create data set with labels from given file.
+    This function can only be used for the data set that was given for the exercise
+
+    :param file_name: The file name
+    :return: The data set that can be used for the exercises
     """
 
     test_data = np.genfromtxt(file_name, delimiter=';', usecols=[1, 2, 3, 4, 5, 6, 7], converters={5: lambda s: 0 if s == b"-1" else float(s), 7: lambda s: 0 if s == b"-1" else float(s)})
