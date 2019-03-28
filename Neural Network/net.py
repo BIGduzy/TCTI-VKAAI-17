@@ -10,9 +10,9 @@ class HyperbolicTangent:
 
     @staticmethod
     def activation_function_derivative(x):
-        # TODO: Ask Huib
-        # return 1 - math.tanh(math.tanh(x))
-        return 1 - x * x
+        return 1 - math.tanh(x)**2
+        # Note: From testing the derivative below seems to work as well
+        # return 1 - x * x
 
 
 class Rectifier:
