@@ -11,6 +11,8 @@ if __name__ == "__main__":
     training_inputs, test_inputs = training_inputs / 255.0, test_inputs / 255.0
 
     # Create the neural network
+    # This was a model used in an example that was found while researching the topology for this problem,
+    # with this model we were able to score 98~% on the validation set
     model = tf.keras.models.Sequential([
       tf.keras.layers.Flatten(input_shape=(28, 28)),
       tf.keras.layers.Dense(512, activation=tf.nn.relu),
@@ -22,12 +24,12 @@ if __name__ == "__main__":
                   metrics=['accuracy'])
 
     # Train the model
-    model.fit(training_inputs, training_labels, epochs=4)
+    model.fit(training_inputs, training_labels, epochs=2)
 
-    # Validate teh model (98% avg)
+    # Validate teh model (98% avg @:2 epocs)
     model.evaluate(test_inputs, test_labels)
 
-    # Use the network
+    # Use the network / Render the numbers
     pygame.init()
     pygame.font.init()
     myfont = pygame.freetype.SysFont('Comic Sans MS', 30)
@@ -56,6 +58,7 @@ if __name__ == "__main__":
 
             index += 1
             index %= len(test_inputs)
+            # Draw label of the number and what the model predicted
             myfont.render_to(screen, (5, 5), str(test_label) + ' =', (255, 255, 255))
             myfont.render_to(screen, (50, 5), str(prediction.argmax()), (255, 255, 255))
 
