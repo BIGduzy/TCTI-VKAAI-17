@@ -32,6 +32,7 @@ class EvolutionaryAlgorithm:
 
         self.generation = 0
         self.population = []
+        self.population_with_fitness = []
 
     def _evolution_iteration(self, target, retain_rate = 0.2, selection_rate = 0.05, mutation_rate = 0.01):
         """
@@ -45,9 +46,9 @@ class EvolutionaryAlgorithm:
         :return:
         """
         # Calculate the fitness for each individual in the population (and pair them with the individual)
-        population_with_fitness = [(self.fitness_function(x, target), x) for x in self.population]
+        self.population_with_fitness = [(x, self.fitness_function(x, target)) for x in self.population]
         # Select the parents we want to use for crossover
-        parents = self.selection_strategy(population_with_fitness, retain_rate, selection_rate)
+        parents = self.selection_strategy(self.population_with_fitness, retain_rate, selection_rate)
 
         # Crossover parents to create off spring
         desired_length = len(self.population) - len(parents)
@@ -63,14 +64,24 @@ class EvolutionaryAlgorithm:
         parents.extend(children)
         return parents
 
-    def avg_fitness(self, population, target):
+    def avg_fitness(self):
         """
         Find average fitness for a population
-        :param population: population to evaluate
-        :param target: the value that we are aiming for (X)
         """
-        summed = reduce(add, (self.fitness_function(x, target) for x in population), 0)
-        return summed / len(population)
+        summed = reduce(add, (x[1] for x in self.population_with_fitness), 0)
+        return summed / len(self.population_with_fitness)
+
+    def get_best_individual(self, score_is_error):
+        """
+        Find best individual in population
+        :return: A tuple with (individual, its score)
+        """
+        best = self.population_with_fitness[0]
+        for i in self.population_with_fitness:
+            if (score_is_error and i[1] < best[1]) or (not score_is_error and i[1] > best[1]):
+                best = i
+
+        return best
 
     def populate(self, population_count = 100):
         """
@@ -79,7 +90,7 @@ class EvolutionaryAlgorithm:
         """
         self.population = [self.individual(*self.individual_args) for _ in range(population_count)]
 
-    def evolve(self, target, retain_rate = 0.2, selection_rate = 0.05, mutation_rate = 0.01):
+    def evolve(self, target, score_is_error , retain_rate = 0.2, selection_rate = 0.05, mutation_rate = 0.01):
         """
         The Evolution algorithm
         Yields each generation of the evolution
@@ -95,4 +106,4 @@ class EvolutionaryAlgorithm:
             self.population = self._evolution_iteration(target, retain_rate, selection_rate, mutation_rate)
             self.generation += 1
 
-            yield self.population, self.avg_fitness(self.population, target)
+            yield self.population, self.avg_fitness(), self.get_best_individual(score_is_error)

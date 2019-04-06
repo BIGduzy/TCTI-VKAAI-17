@@ -31,7 +31,7 @@ def fitness(individual, target):
 
 
 def selection_strategy(population_with_fitness, retain_rate, selection_rate):
-    graded = [x[1] for x in sorted(population_with_fitness)]
+    graded = [x[0] for x in sorted(population_with_fitness, key = lambda x: x[1])]
     retain_length = int(len(graded) * retain_rate)
     parents = graded[:retain_length]
     for individual in graded[retain_length:]:
@@ -66,8 +66,8 @@ def mutation_function(individual, population):
 
 if __name__ == "__main__":
     target = 333  # X
-    p_count = 100  # Number of individuals in population
-    generation_count = 100  # Number of generations
+    p_count = 200  # Number of individuals in population
+    generation_count = 200  # Number of generations
     i_length = 7  # N
     i_min = 0  # value range for generating individuals
     i_max = 70
@@ -79,10 +79,11 @@ if __name__ == "__main__":
 
     fitness_history = []
     population = None
-    for population, score in EA.evolve(target):
+    for population, score, best_i in EA.evolve(target, True):
         fitness_history.append(score)
         if EA.generation >= generation_count:
             break
 
     print(population)
     print(fitness_history)
+    print(score)

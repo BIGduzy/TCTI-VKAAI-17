@@ -40,7 +40,7 @@ def fitness(individual, target):
 
 
 def selection_strategy(population_with_fitness, retain_rate, selection_rate):
-    graded = [x[1] for x in sorted(population_with_fitness)]
+    graded = [x[0] for x in sorted(population_with_fitness, key = lambda x: x[1])]
     retain_length = int(len(graded) * retain_rate)
     parents = graded[:retain_length]
     for individual in graded[retain_length:]:
@@ -97,24 +97,24 @@ if __name__ == "__main__":
     """
     After some experimenting with the values for retain_rate, selection_rate, mutation_rate it appear the selection rate
     had the most impact with this problem. With the selection_rate of 0.2 and the other on there default value we can get
-    perfect score most of the time.
+    perfect average score most of the time.
     """
     test = 0
-    total = 1000
+    total = 1
     for i in range(total):
         # Create an Evolution object
         EA = EvolutionaryAlgorithm(fitness, selection_strategy, crossover_function, mutation_function, individual)
         # Populate a new generation
         EA.populate(p_count)
-        score = 0
-        for population, score in EA.evolve(target, 0.2, 0.2):
-            fitness_history.append(score)
-            if EA.generation >= generation_count or score <= acceptable_score:
+        for population, avg_score, best_individual in EA.evolve(target, True, 0.2, 0.2):
+            print("Avg score: ", avg_score, "best score:", best_individual[1])
+            fitness_history.append(avg_score)
+            if EA.generation >= generation_count or avg_score <= acceptable_score:
                 break
-        print(score)
-        test += (score <= acceptable_score)
-    print("Accuracy: ", test / total * 100, '%')  # Avg 90%
+        test += (avg_score <= acceptable_score)
 
     print(fitness_history)
     print(population)
-    print(EA.avg_fitness(population, target), "in", EA.generation, "generations")
+    print(EA.avg_fitness(), "in", EA.generation, "generations")
+    print("Accuracy: ", test / total * 100, '%')  # Avg 90%
+    print(best_individual)
